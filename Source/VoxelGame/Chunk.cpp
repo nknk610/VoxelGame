@@ -3,6 +3,7 @@
 
 #include "Chunk.h"
 #include "UObject/ConstructorHelpers.h"
+#include "SimplexNoiseBPLibrary.h"
 
 // Sets default values
 AChunk::AChunk()
@@ -12,6 +13,8 @@ AChunk::AChunk()
 
 	VoxelSize = 100.f;
 	NumOfVoxelsSide = 32;
+	MAX_HEIGHT = 20;
+	D = 0.0001f;
 
 	Chunk = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("ChunkBlock"));
 
@@ -36,6 +39,7 @@ void AChunk::OnConstruction(const FTransform& Transform)
 
 void AChunk::GenerateVoxels()
 {
+	/*
 	Chunk->ClearInstances();
 
 	FVector VoxelScale = FVector(VoxelSize);
@@ -48,6 +52,30 @@ void AChunk::GenerateVoxels()
 		for (float j = -HalfVoxelCount; j < HalfVoxelCount; j++)
 		{
 			FVector VoxelLocation = FVector(i * VoxelSize + HalfVoxelSize, j * VoxelSize + HalfVoxelSize, -HalfVoxelSize);
+			FTransform VoxelTransform = FTransform(VoxelRotation, VoxelLocation, VoxelScale);
+			Chunk->AddInstance(VoxelTransform);
+		}
+	}
+	*/
+
+	Chunk->ClearInstances();
+
+	FVector VoxelScale = FVector(VoxelSize);
+	FRotator VoxelRotation = FRotator::ZeroRotator;
+	FVector ActorLocation = GetActorLocation();
+
+	float HalfVoxelCount = NumOfVoxelsSide / 2.f;
+	float HalfVoxelSize = VoxelSize / 2.f;
+	for (float i = -HalfVoxelCount; i < HalfVoxelCount; i++)
+	{
+		for (float j = -HalfVoxelCount; j < HalfVoxelCount; j++)
+		{
+			float X = i * VoxelSize + HalfVoxelSize;
+			float Y = j * VoxelSize + HalfVoxelSize;
+
+			float NoiseValue = USimplexNoiseBPLibrary::SimplexNoise2D((ActorLocation.X + X) * D, (ActorLocation.Y + Y) * D);
+			float Z = FMath::TruncToFloat(NoiseValue * MAX_HEIGHT / 2.f);
+			FVector VoxelLocation = FVector(X, Y, Z * VoxelSize);
 			FTransform VoxelTransform = FTransform(VoxelRotation, VoxelLocation, VoxelScale);
 			Chunk->AddInstance(VoxelTransform);
 		}

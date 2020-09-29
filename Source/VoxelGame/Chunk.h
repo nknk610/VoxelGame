@@ -18,19 +18,26 @@ public:
 
 	// A voxel size
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Chunk")
-		float VoxelSize;
+	float VoxelSize;
 
 	// How many include voxels in one line, the real size of a chunk by unreal unit is VoxelSize * VoxelCount
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Chunk")
-		int NumOfVoxelsSide;
+	int NumOfVoxelsSide;
+
+	// Difference scale of perlin noise position
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Chunk")
+	float D;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Chunk")
+	int MAX_HEIGHT;
 
 	UPROPERTY(BlueprintReadWrite, VisibleDefaultsOnly, Category = "Chunk")
-		UInstancedStaticMeshComponent* Chunk;
+	UInstancedStaticMeshComponent* Chunk;
 
 protected:
 	// This mesh's size must be 1m^3 
 	UPROPERTY(BlueprintReadOnly, Category = "Chunk")
-		UStaticMesh* Block;
+	UStaticMesh* Block;
 
 
 public:
